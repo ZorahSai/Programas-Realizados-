@@ -25,7 +25,7 @@ def extrair_transacoes_pdf(caminho_pdf):
                 
             linhas = texto.split('\n')
             for linha in linhas:
-                # 1. TENTA ACHAR UMA DATA NA LINHA (Ex: "20 de agosto 2026")
+                # 1 TENTA ACHAR UMA DATA NA LINHA (Ex: "20 de agosto 2026")
                 # A Regex busca um número, a palavra "de", um mês e um ano.
                 match_data = re.search(r'(\d{1,2})\s+de\s+([a-zA-ZçÇ]+)\s*(?:de\s*)?(\d{4})', linha, re.IGNORECASE)
                 if match_data:
@@ -38,14 +38,14 @@ def extrair_transacoes_pdf(caminho_pdf):
                     # Achamos uma data, vamos para a próxima linha
                     continue 
 
-                # 2. PROCURA OS VALORES (agora incluindo os traços especiais do PDF: -, –, −)
+                # 2 PROCURA OS VALORES (agora incluindo os traços especiais do PDF: -, –, −)
                 match = re.search(r'([+\-–−])\s*(?:R\$)?\s*([\d\.\s]+,\d{2})', linha)
                 
                 if match:
                     sinal = match.group(1)
                     valor_bruto = match.group(2) # Ex: " 18,00" ou "51,99"
                     
-                    # Limpeza agressiva para evitar valores absurdos
+                    
                     valor_limpo = valor_bruto.replace(' ', '') # 1. Remove qualquer espaço
                     valor_limpo = valor_limpo.replace('.', '') # 2. Remove pontos (se houver)
                     valor_limpo = valor_limpo.replace(',', '.') # 3. Troca a vírgula por ponto
@@ -56,12 +56,12 @@ def extrair_transacoes_pdf(caminho_pdf):
                         print(f"ERRO DE CONVERSÃO! Não foi possível converter: {valor_limpo}")
                         continue
                         
-                    # DEBUG: Isso vai aparecer no seu terminal para você auditar
+                    
                     print(f"Linha lida: {linha.strip()}")
                     print(f" -> Capturado: '{valor_bruto}' | Convertido: {valor}")
                     print("-" * 30)
 
-                    # 3. DEFINE SE É GANHO OU GASTO
+                    # 3 DEFINE SE É GANHO OU GASTO
                     if sinal == '+':
                         tipo = "ganho"
                         ganhos_totais += valor
@@ -69,18 +69,18 @@ def extrair_transacoes_pdf(caminho_pdf):
                         tipo = "gasto"
                         gastos_totais += valor
                         
-                    # 4. LIMPA A DESCRIÇÃO
+                    # 4 LIMPA A DESCRIÇÃO
                     descricao = linha.replace(match.group(0), '').strip()
                     
-                    # Remove o horário do começo da linha (Ex: "19:12 ")
+                   
                     descricao = re.sub(r'^\d{2}:\d{2}\s+', '', descricao).strip()
                     
-                    # 5. SALVA A TRANSAÇÃO COM A DATA CORRETA
+                    # 5 SALVA A TRANSAÇÃO COM A DATA CORRETA
                     transacoes_lidas.append({
                         "tipo": tipo, 
                         "descricao": descricao, 
                         "valor": valor,
-                        "data": data_atual # Usa a data que encontramos no PDF!
+                        "data": data_atual 
                     })
                     
     return transacoes_lidas, ganhos_totais, gastos_totais
