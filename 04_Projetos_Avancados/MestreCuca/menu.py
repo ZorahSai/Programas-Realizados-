@@ -27,7 +27,7 @@ class GraficoView(ctk.CTkFrame):
     def __init__(self, parent, gerenciador, callback_voltar):
         super().__init__(parent, fg_color="transparent")
         self.gerenciador = gerenciador
-        self.callback_voltar = callback_voltar # Função para voltar para a tabela
+        self.callback_voltar = callback_voltar 
 
         self.meses = {
             1: "Janeiro", 2: "Fevereiro", 3: "Março", 4: "Abril", 
@@ -213,7 +213,7 @@ class App(ctk.CTkFrame):
         # ==========================================
         # 2. MENU LATERAL RETRÁTIL (Com barra de rolagem)
         # ==========================================
-        # CTkScrollableFrame cria a rolagem automática para telas pequenas
+       
         self.sidebar_frame = ctk.CTkScrollableFrame(self, width=200, corner_radius=0)
         self.menu_visible = False # Estado inicial: Menu oculto
         
@@ -224,8 +224,6 @@ class App(ctk.CTkFrame):
         ctk.CTkButton(self.sidebar_frame, text="Mostrar Saldo", command=self.mostrar_saldo).pack(pady=10, padx=10, fill="x")
         ctk.CTkButton(self.sidebar_frame, text="Imprimir Relatório", command=self.imprimir_relatorio).pack(pady=10, padx=10, fill="x")
         ctk.CTkButton(self.sidebar_frame, text="Mostrar Gráfico", command=self.mostrar_janela_grafico).pack(pady=10, padx=10, fill="x")
-        
-        # Botão de Logout com cor vermelha para destacar no final da barra
         ctk.CTkButton(self.sidebar_frame, text="Trocar Usuário", command=self.logout, fg_color="#C93B3B", hover_color="#A32A2A").pack(pady=(30, 10), padx=10, fill="x")
         
         # ==========================================
@@ -267,20 +265,20 @@ class App(ctk.CTkFrame):
         
         self.atualizar_historico()
         
-        # Inicia o programa mostrando a tabela
+        
         self.mostrar_tabela()
 
     # ==============================================================
     # MÉTODOS DE TROCA DE TELA (SPA)
     # ==============================================================
     def mostrar_tabela(self):
-        """Esconde o gráfico e volta a exibir a tabela de lançamentos"""
+        # Esconde o gráfico e volta a exibir a tabela de lançamentos
         if self.grafico_frame:
             self.grafico_frame.grid_forget()
         self.tabela_frame.grid(row=0, column=0, sticky="nsew")
 
     def mostrar_janela_grafico(self):
-        """Esconde a tabela e exibe a interface de gráficos na mesma tela"""
+        # Esconde a tabela e exibe a interface de gráficos na mesma tela
         if not self.gerenciador.usuario.transacoes:
             messagebox.showinfo("Gráfico", "Não há transações registradas para gerar um gráfico.")
             return
@@ -297,13 +295,13 @@ class App(ctk.CTkFrame):
         self.grafico_frame.grid(row=0, column=0, sticky="nsew")
 
     def toggle_menu(self):
-        """Esconde ou mostra a aba lateral de opções"""
+        # Esconde ou mostra a aba lateral de opções
         if self.menu_visible:
-            # Oculta o frame
+            
             self.sidebar_frame.grid_forget()
             self.menu_visible = False
         else:
-            # Mostra o frame fixado na esquerda
+            
             self.sidebar_frame.grid(row=1, column=0, sticky="ns")
             self.menu_visible = True
     def logout(self): self.controller.show_login_page()
@@ -354,7 +352,7 @@ class App(ctk.CTkFrame):
                 messagebox.showerror("Erro", "Descrição e valor são obrigatórios.", parent=janela)
                 return
                 
-            # Aqui adicionamos o try/except para capturar o ValueError da data
+            
             try:
                 if transacao_para_editar: 
                     self.gerenciador.editar_transacao(transacao_para_editar, {'tipo': tipo, 'descricao': descricao, 'valor': valor, 'data': data})
@@ -364,7 +362,7 @@ class App(ctk.CTkFrame):
                 self.atualizar_historico()
                 janela.destroy()
             except ValueError as e:
-                # Exibe o erro da classe Transacao direto na tela
+                
                 messagebox.showerror("Data Inválida", str(e), parent=janela)
         ttk.Button(janela, text="Salvar", command=salvar).pack(pady=15)
     def registrar_ganho(self): self.abrir_janela_registro("ganho")
@@ -378,7 +376,7 @@ class App(ctk.CTkFrame):
         if not caminho_pdf:
             return
 
-        # Chama o arquivo externo que processa a regra de negócios
+        
         try:
             transacoes, ganhos, gastos = extrair_transacoes_pdf(caminho_pdf)
         except Exception as e:
